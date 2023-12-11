@@ -78,10 +78,9 @@ function onScroll(event)
 
   zoomAmount += (event.deltaY/10000) // * -0.10;
 
-  console.log(event.deltaY)
+
   // Restrict scale
   //zoomAmount =// Math.min(Math.max(0, zoomAmount), 1) / 1
-  console.log(zoomAmount);
   if (zoomAmount < 0.005)
   {
     zoomAmount = 0.005
@@ -430,11 +429,49 @@ var naughtyLastNames = [
     "Pharmacy",
     "Phil"
 ]
+
+var wishedItems = [
+    "some love",
+    "a bike",
+    "a girlfriend",
+    "a boyfriend",
+    "a playstation 5",
+    "a nintendo gamecube",
+    "some cheese and bikkies",
+    "a cup of tea",
+    "to be surrounded by family",
+    "your autograph",
+    "a cat",
+    "a friend",
+    "to live past 80",
+    "a new bike",
+    "a family photo",
+    "some food",
+    "somewhere they belong",
+    "cheese, lots of cheese",
+    "a new accountant for tax evasion",
+    "a new coal factory to burn the planet more",
+    "a new blanket",
+    "some earrings",
+    "cool sunglasses",
+    "a hat",
+    "redemption",
+    "Santa",
+    "warmth",
+    "less snow!",
+    "a new monarch",
+    "a republic",
+    "some help",
+    "therapy",
+    "glasses after their cataract operation failed"
+]
+naughtyPeople = []
+
 function generate_randomname()
 {
     return naughtyFirstNames[getRandomInt(0, naughtyFirstNames.length)] + " " +  naughtyLastNames[getRandomInt(0, naughtyLastNames.length)]
 }
-naughtyPeople = []
+
 for (let i =0; i < people.length; i++)
 {
     naughtyPeople.push({
@@ -450,7 +487,6 @@ function render_naughtylistItem(x,y,name,dead)
     context.font = "bold " + fontsizesmall +"px serif";
     context.textAlign = "right";
     context.fillStyle = 'white'
-    console.log(dead)
     context.fillText(name, x, y)
     if (dead)
     {
@@ -460,15 +496,13 @@ function render_naughtylistItem(x,y,name,dead)
     return height;
 }
 
-lastUpdatedPeopleLength = performance.now()
-allegedPeopleLength = people.length
+lastUpdatedPeopleLength = performance.now();
+allegedPeopleLength = people.length;
 window.onresize = function(event) {
     location.reload();
 };
 function render_naughtylist(x, y)
 {
-    //console.log("Rendering naughtty list")
-    //console.log( naughtyPeople.length)
     current_y = 0;
     count = 0
     backwardList = []
@@ -488,7 +522,9 @@ function render_naughtylist(x, y)
         current_y += render_naughtylistItem(x, y + current_y, naughtyPerson.name, naughtyPerson.dead)
     });
 }
-
+var showLastWish = 0;
+var randomWish = wishedItems[getRandomInt(0, wishedItems.length)];
+var playedLastWishSound = false;
 (function render_foreground() {
     requestAnimationFrame(render_foreground);
     
@@ -551,9 +587,31 @@ function render_naughtylist(x, y)
             {
                 deathsounds[2].play();
                 playedEndSound2 = true;
+                showLastWish = performance.now() + 1000
+                console.log(showLastWish)
             }
             context.fillStyle = 'gold'
             context.fillText("Click to retry", canvas.width/2, (canvas.height/2) + fontsize)
+
+            if ((score > 0) && (performance.now() > showLastWish))
+            {
+                if (!playedLastWishSound)
+                {
+                    playedLastWishSound = true;
+                    deathsounds[0].play();
+                }
+                console.log("Rendering last wish");
+                var lastPersonDead = naughtyPeople[score];
+                console.log(lastPersonDead.name)
+                context.fillStyle = 'gray';
+                context.fillText( "The last person you killed was", canvas.width/2, (canvas.height/2) + fontsize + (fontsize * 1.5))
+                context.fillStyle = 'red';
+                context.fillText( lastPersonDead.name,canvas.width/2, (canvas.height/2) + fontsize + (fontsize * 1.5) + fontsize)
+                context.fillStyle = 'gray';
+                context.fillText( "All they wanted for christmas was", canvas.width/2, (canvas.height/2) + fontsize + (fontsize * 1.5) + fontsize + fontsize)
+                context.fillStyle = 'gold';
+                context.fillText( randomWish, canvas.width/2, (canvas.height/2) + fontsize + (fontsize * 1.5) + fontsize + fontsize + fontsize)
+            }
         }
     }
 })();
