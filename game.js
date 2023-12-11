@@ -242,7 +242,12 @@ var initialPeople = people.length;
     context.fillStyle = 'white'
     ctx.textAlign = "left";
     context.fillText("SCORE: " + score + "/" + initialPeople, 65, 60)
-    context.fillText("TIME LEFT: " + (timeLeft - timeElapsedReal), 65, 60 + 40)
+    var stuff = (timeLeft - timeElapsedReal)
+    if (stuff < 0)
+    {
+        stuff = 0
+    }
+    context.fillText("TIME LEFT: " + stuff, 65, 60 + 40)
     //context.fillText("PEOPLE LEFT: " + people.length, 70, 60 + 40 + 40)
     if (timeElapsedReal <= timeLeft)
     {
@@ -255,6 +260,10 @@ var initialPeople = people.length;
         ctx.textAlign = "center";
         context.fillStyle = 'red'
         context.fillText("Times up!", canvas.width/2, canvas.height/2)
+        if (timeElapsedReal > timeLeft)
+        {
+            context.fillText("Click to retry :)", canvas.width/2, (canvas.height/2) + 40)
+        }
     }
 })();
 
