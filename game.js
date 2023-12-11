@@ -43,6 +43,7 @@ var render = Render.create({
 });
 var timeLeft = 12
 var score = 0
+
 function customShape(x, y, shape, color) {
     let vertices = Matter.Vertices.fromPath(shape);
     return Matter.Bodies.fromVertices(x, y, vertices, {
