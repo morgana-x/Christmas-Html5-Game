@@ -291,33 +291,36 @@ canvas.style.pointerEvents = "none"
 document.body.appendChild(canvas);
 
 var initialPeople = people.length;
+var fontsize = (40 * (canvas.width / 1200));
 (function render_foreground() {
     requestAnimationFrame(render_foreground);
     
     context.clearRect(0, 0, canvas.width, canvas.height);
     draw_flakes()
-    context.font = "bold 50px serif";
+    context.font = "bold " + fontsize +"px serif";
     context.fillStyle = 'white'
     ctx.textAlign = "left";
-    context.fillText("SCORE: " + score + "/" + initialPeople, 65, 60)
+    context.fillText("SCORE: " + score + "/" + initialPeople, fontsize, fontsize)
     var stuff = (timeLeft - timeElapsedReal)
     if (stuff < 0)
     {
         stuff = 0
     }
-    context.fillText("TIME LEFT: " + stuff, 65, 60 + 40)
+    context.fillText("TIME LEFT: " + stuff, fontsize, fontsize + fontsize)
     //context.fillText("PEOPLE LEFT: " + people.length, 70, 60 + 40 + 40)
     if (!started)
     {
+        
+    
         ctx.textAlign = "center";
-        context.fillText("Click to begin!", canvas.width/2, canvas.height/2 - 80);
+        context.fillText("Click to begin!", canvas.width/2, canvas.height/2 - fontsize * 2);
         ctx.fillStyle = 'gold'
-        context.fillText("Click to spawn presents",canvas.width/2, canvas.height/2 - 80 + 60)
+        context.fillText("Click to spawn presents",canvas.width/2, canvas.height/2 - (fontsize * 2) + (fontsize * 1.5))
         context.fillText("Scroll to zoom", canvas.width/2, canvas.height/2 - 80 + 60 + 40)
         ctx.fillStyle = 'white'
-        context.fillText("You are santa and a town has been very naughty...", canvas.width/2, canvas.height/2 - 80 + 60 + 40 + 60)
+        context.fillText("You are santa and a town has been very naughty...", canvas.width/2, canvas.height/2 - (fontsize * 2) + (fontsize * 1.5) + fontsize + fontsize)
         ctx.fillStyle = 'red'
-        context.fillText("Show the residents the true meaning of christmas!", canvas.width/2, canvas.height/2 - 80 + 60 + 40 + 60 + 40)
+        context.fillText("Show the residents the true meaning of christmas!", canvas.width/2, canvas.height/2 - (fontsize * 2) + (fontsize * 1.5) + fontsize + fontsize + fontsize)
     }
     if ( started && (timeElapsedReal <= timeLeft))
     {
