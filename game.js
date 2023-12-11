@@ -39,9 +39,57 @@ var render = Render.create({
     height: window.innerHeight,
     wireframes: true, // need this or various render styles won't take
     background: pink,
-    hasBounds: false
+    hasBounds: true
   }
 });
+// add mouse control
+var mouse = Mouse.create(render.canvas),
+    mouseConstraint = MouseConstraint.create(engine, {
+      mouse: mouse,
+      constraint: {
+        stiffness: 0.2,
+        render: {
+          visible: true
+        }
+      }
+    });
+var zoomAmount = 0.103
+function updateZoom()
+{
+    var lookx =  (render.options.width/2);//-(mouse.position.x/2);//render.options.width/2;
+    var looky = (render.options.height);//-(mouse.position.y/2);//render.options.height/2;
+    if (zoomAmount >= 0.15)
+    {
+      lookx = render.options.width/2;
+      looky = render.options.height/2;
+    }
+    Matter.Render.lookAt(render, Bodies.rectangle(lookx,looky, 10000 * zoomAmount, 10000 * zoomAmount))
+}
+updateZoom();
+function onScroll(event)
+{
+    //event.preventDefault();
+
+  zoomAmount += (event.deltaY/10000) // * -0.10;
+
+  console.log(event.deltaY)
+  // Restrict scale
+  //zoomAmount =// Math.min(Math.max(0, zoomAmount), 1) / 1
+  console.log(zoomAmount);
+  if (zoomAmount < 0.005)
+  {
+    zoomAmount = 0.005
+  }
+  if (zoomAmount > 0.15)
+  {
+    zoomAmount = 0.15
+  }
+  updateZoom();
+}
+
+
+
+window.onwheel = onScroll;
 render.canvas.style.left = "0px";
 render.canvas.style.top = "0px";
 render.canvas.style.position = "absolute";
@@ -74,12 +122,12 @@ var box7 = customShape(85, 102, shape7, red);*/
 
 
 // create two boxes and a ground
-var ground = Bodies.rectangle(render.options.width/2, render.options.height +250, render.options.width, 500, { 
+var ground = Bodies.rectangle(render.options.width/2, render.options.height +50, render.options.width, 100, { 
   isStatic: true,
   render: { fillStyle: white,}
 });
 
-var wallRight = Bodies.rectangle(render.options.width, render.options.height/2, 100, render.options.height, { 
+/*var wallRight = Bodies.rectangle(render.options.width, render.options.height/2, 100, render.options.height, { 
   isStatic: true,
   render: { fillStyle: white,}
 });
@@ -87,7 +135,7 @@ var wallRight = Bodies.rectangle(render.options.width, render.options.height/2, 
 var wallLeft = Bodies.rectangle(0, render.options.height/2,100, render.options.height, { 
   isStatic: true,
   render: { fillStyle: white,}
-});
+});*/
 
 // add all of the bodies to the world
 
@@ -97,7 +145,7 @@ screamsounds.push(new Audio('snd/m_scream_1.mp3'));
 screamsounds.push(new Audio('snd/f_scream_1.mp3'));
 
 
-World.add(engine.world,  [ground, wallRight, wallLeft]);// [box1, box2, box3, box4, box5, box6, box7, ground, wallRight, wallLeft]);
+World.add(engine.world,  [ground]);//, wallRight, wallLeft]);// [box1, box2, box3, box4, box5, box6, box7, ground, wallRight, wallLeft]);
 
 var people = []
 function spawnPerson(x,y,world){
@@ -172,8 +220,8 @@ function oncollide(stuff){
 }
 Matter.Events.on(engine, "collisionEnd", oncollide)
 //spawnHouse(200,930, engine.world);
-for (let i = 0; i < Math.round(render.options.width / (45 + 100/8)); i++) {//20; i++) {
-    spawnHouse(75 + (i*45), render.options.height, engine.world);
+for (let i = 0; i < Math.round(render.options.width / (47)); i++) {//20; i++) {
+    spawnHouse((50/2) + (i*45), render.options.height, engine.world);
 }
 // run the engine
 Engine.run(engine);
@@ -182,17 +230,7 @@ Engine.run(engine);
 Render.run(render);
 
 
-// add mouse control
-var mouse = Mouse.create(render.canvas),
-    mouseConstraint = MouseConstraint.create(engine, {
-      mouse: mouse,
-      constraint: {
-        stiffness: 0.2,
-        render: {
-          visible: true
-        }
-      }
-    });
+
 
 World.add(world, mouseConstraint);
 
@@ -346,7 +384,4 @@ function update_flakes()
         }
     }
 }
-
-
-
 
