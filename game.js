@@ -588,7 +588,7 @@ var playedLastWishSound = false;
                 deathsounds[2].play();
                 playedEndSound2 = true;
                 showLastWish = performance.now() + 1000
-                console.log(showLastWish)
+      
             }
             context.fillStyle = 'gold'
             context.fillText("Click to retry", canvas.width/2, (canvas.height/2) + fontsize)
@@ -600,9 +600,9 @@ var playedLastWishSound = false;
                     playedLastWishSound = true;
                     deathsounds[0].play();
                 }
-                console.log("Rendering last wish");
-                var lastPersonDead = naughtyPeople[score];
-                console.log(lastPersonDead.name)
+   
+                var lastPersonDead = ((score >= initialPeople)) ? naughtyPeople[initialPeople-1] : naughtyPeople[score];
+               
                 context.fillStyle = 'gray';
                 context.fillText( "The last person you killed was", canvas.width/2, (canvas.height/2) + fontsize + (fontsize * 1.5))
                 context.fillStyle = 'red';
