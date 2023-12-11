@@ -49,18 +49,24 @@ var mouse = Mouse.create(render.canvas),
       constraint: {
         stiffness: 0.2,
         render: {
-          visible: true
+          visible: false
         }
       }
     });
+
+var groundwidth = 2000;
+var ground = Bodies.rectangle( groundwidth/2, render.options.height +50, groundwidth, 100, { 
+    isStatic: true,
+    render: { fillStyle: white,}
+});
 var zoomAmount = 0.103
 function updateZoom()
 {
-    var lookx =  (render.options.width/2);//-(mouse.position.x/2);//render.options.width/2;
+    var lookx =  ground.position.x //(render.options.width/2);//-(mouse.position.x/2);//render.options.width/2;
     var looky = (render.options.height);//-(mouse.position.y/2);//render.options.height/2;
     if (zoomAmount >= 0.15)
     {
-      lookx = render.options.width/2;
+      lookx = ground.position.x//render.options.width/2;
       looky = render.options.height;
     }
     Matter.Render.lookAt(render, Bodies.rectangle(lookx,looky, 10000 * zoomAmount, 10000 * zoomAmount))
@@ -122,10 +128,8 @@ var box7 = customShape(85, 102, shape7, red);*/
 
 
 // create two boxes and a ground
-var ground = Bodies.rectangle(render.options.width/2, render.options.height +50, render.options.width, 100, { 
-  isStatic: true,
-  render: { fillStyle: white,}
-});
+//var ground = Bodies.rectangle(render.options.width/2, render.options.height +50, render.options.width, 100, { 
+
 
 /*var wallRight = Bodies.rectangle(render.options.width, render.options.height/2, 100, render.options.height, { 
   isStatic: true,
@@ -148,6 +152,7 @@ deathsounds = []
 deathsounds.push(new Audio('snd/splat.mp3'));
 deathsounds.push(new Audio('snd/splat2.mp3'));
 deathsounds.push(new Audio('snd/crack.mp3'));
+deathsounds.push(new Audio('snd/snap.ogg'))
 World.add(engine.world,  [ground]);//, wallRight, wallLeft]);// [box1, box2, box3, box4, box5, box6, box7, ground, wallRight, wallLeft]);
 
 var people = []
@@ -165,33 +170,67 @@ function getRandomArbitrary(min, max) {
     return Math.floor(getRandomArbitrary(min,max));
   }
 function spawnHouse(x,y, world){
-    var width = getRandomInt(16,40) //30;
+    var width = getRandomInt(16,35) //30;
     var height = getRandomInt(10,20);
-    var thicknessWall = 4;
+    var thicknessWall = 5;
     var thicknessRoof = 2.5;
-    var boxA = Bodies.rectangle(x + width/2, y, thicknessWall, height);
+    /*var boxA = Bodies.rectangle(x + width/2, y, thicknessWall, height);
     var boxB = Bodies.rectangle(x - width/2, y, thicknessWall, height);
-    var boxC = Bodies.rectangle(x, y - height - thicknessWall-0.1, width+(thicknessWall*2), thicknessRoof);
-
-    var amountOfPeople = getRandomInt(2, width/4); // 8;
-    for (let i = 0; i < amountOfPeople; i++) {
-        spawnPerson(x - ( (0.5*amountOfPeople)) + i * 2.5,y, world);
+    var boxC = Bodies.rectangle(x, y - height - thicknessWall-0.1, width+(thicknessWall*2), thicknessRoof);*/
+    var floors =  (width >= 34) ? getRandomInt(1, 3) : 1;
+    if (floors > 1)
+    {
+        thicknessWall *= floors/2
+        if (thicknessWall > 7)
+        {
+            thicknessWall = 7
+        }
     }
+    for (let i=0; i < floors; i ++)
+    {
+    var offsetRoof = 0 //(i>=1) ? thicknessRoof/2 : 0;
+    var boxA = Bodies.rectangle(x + width/2, y - (offsetRoof + ((height + thicknessRoof - 1) * i) + (height/2)) , thicknessWall, height);
+    var boxB = Bodies.rectangle(x - width/2, y - (offsetRoof + ((height + thicknessRoof - 1) * i) + (height/2)), thicknessWall, height);
+    var boxC = Bodies.rectangle(x, y - (height + offsetRoof + ((height + thicknessRoof - 1) * i ) + (thicknessRoof/2)), width+(thicknessWall*2), thicknessRoof);
+    var slop = 0.001;//0.05;
+    boxA.slop = slop
+    boxB.slop = slop
+    boxC.slop = slop
+    /*if (i > 0)
+    {
+        mass = 1;
+        boxA.mass = mass;
+        boxB.mass = mass;
+        boxC.mass = mass;
+    }*/
     stuff = [boxA, boxB, boxC];
     World.add(world,  stuff);
+    var amountOfPeople = getRandomInt(2, width/4); // 8;
+    for (let z = 0; z < amountOfPeople; z++) {
+        spawnPerson(x - ( (0.5*amountOfPeople * 2.5)) + z * 2.5,y - (((height+ thicknessRoof) * i) + offsetRoof + (3.5/2)), world);
+    }
+    width *= 0.8
+    thicknessWall /= floors
+    if (thicknessWall < 5)
+    {
+        thicknessWall = 5
+    }
+    }
+
+ 
+    
 }
 function spawnPresent(x,y, world){
     var boxA = Bodies.rectangle(x, y, 15, 15);
     stuff = [boxA];
     World.add(world,  stuff);
 }
-var boxSound = new Audio('snd/box_hit.ogg');
 
 var collisionSounds = []
-collisionSounds.push(boxSound)
 //collisionSounds.push(new Audio('snd/plastic_hit.ogg'));
 collisionSounds.push(new Audio('snd/box_hit_2.mp3'));
-
+collisionSounds.push(new Audio('snd/impact_3.ogg'))
+collisionSounds.push(new Audio('snd/box_hit.ogg'))
 var firstScream = true;
 function oncollide(stuff){
     if (timeElapsedReal >= timeLeft)
@@ -230,11 +269,12 @@ function oncollide(stuff){
 }
 Matter.Events.on(engine, "collisionEnd", oncollide)
 //spawnHouse(200,930, engine.world);
-for (let i = 0; i < Math.round(render.options.width / (47)); i++) {//20; i++) {
-    spawnHouse((50/2) + (i*45), render.options.height, engine.world);
+var numOfHouses = Math.round(groundwidth/ (50))
+for (let i = 0; i < numOfHouses; i++) {//20; i++) {
+    spawnHouse( 47 + (i*47), render.options.height, engine.world);
 }
 // run the engine
-Engine.run(engine);
+//Engine.run(engine);
 
 // run the renderer
 Render.run(render);
@@ -257,6 +297,8 @@ function mouseClickPresent()
     if (!started)
     {
         started = true;
+        Engine.run(engine);
+        //mouseConstraint.constraint.render.visible = true
         lastTime = performance.now();
     }
     if (timeElapsedReal > timeLeft)
@@ -292,6 +334,9 @@ document.body.appendChild(canvas);
 
 var initialPeople = people.length;
 var fontsize = (40 * (canvas.width / 1200));
+
+var playedEndSound1 = false;
+var playedEndSound2 = false;
 (function render_foreground() {
     requestAnimationFrame(render_foreground);
     
@@ -316,11 +361,11 @@ var fontsize = (40 * (canvas.width / 1200));
         context.fillText("Click to begin!", canvas.width/2, canvas.height/2 - fontsize * 2);
         ctx.fillStyle = 'gold'
         context.fillText("Click to spawn presents",canvas.width/2, canvas.height/2 - (fontsize * 2) + (fontsize * 1.5))
-        context.fillText("Scroll to zoom", canvas.width/2, canvas.height/2 - 80 + 60 + 40)
+        context.fillText("Scroll to zoom", canvas.width/2, canvas.height/2 - (fontsize * 2) + (fontsize * 1.5) + fontsize)
         ctx.fillStyle = 'white'
-        context.fillText("You are santa and a town has been very naughty...", canvas.width/2, canvas.height/2 - (fontsize * 2) + (fontsize * 1.5) + fontsize + fontsize)
+        context.fillText("You are santa and a town has been very naughty...", canvas.width/2, canvas.height/2 - (fontsize * 2) + (fontsize * 1.6) + (fontsize * 1.5) + fontsize)
         ctx.fillStyle = 'red'
-        context.fillText("Show the residents the true meaning of christmas!", canvas.width/2, canvas.height/2 - (fontsize * 2) + (fontsize * 1.5) + fontsize + fontsize + fontsize)
+        context.fillText("Show the residents the true meaning of christmas!", canvas.width/2, canvas.height/2 - (fontsize * 2) + (fontsize * 1.6) + (fontsize * 1.5) + fontsize + fontsize)
     }
     if ( started && (timeElapsedReal <= timeLeft))
     {
@@ -330,12 +375,23 @@ var fontsize = (40 * (canvas.width / 1200));
     }
     if (timeElapsedReal >= timeLeft)
     {   
+        if (!playedEndSound1)
+        {
+            deathsounds[1].play();
+            playedEndSound1 = true;
+        }
         ctx.textAlign = "center";
         context.fillStyle = 'red'
-        context.fillText("Times up!", canvas.width/2, canvas.height/2)
+        context.fillText("Times up!", canvas.width/2, canvas.height/2 - fontsize/2)
         if (timeElapsedReal > timeLeft)
         {
-            context.fillText("Click to retry :)", canvas.width/2, (canvas.height/2) + fontsize)
+            if (!playedEndSound2)
+            {
+                deathsounds[2].play();
+                playedEndSound2 = true;
+            }
+            context.fillStyle = 'gold'
+            context.fillText("Click to retry", canvas.width/2, (canvas.height/2) + fontsize)
         }
     }
 })();
@@ -415,3 +471,4 @@ function update_flakes()
     }
 }
 
+Matter.Events.trigger(mouseConstraint, 'mouseup', { mouse: mouse });
