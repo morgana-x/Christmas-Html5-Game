@@ -38,9 +38,13 @@ var render = Render.create({
     width: window.innerWidth,
     height: window.innerHeight,
     wireframes: true, // need this or various render styles won't take
-    background: pink
+    background: pink,
+    hasBounds: false
   }
 });
+render.canvas.style.left = "0px";
+render.canvas.style.top = "0px";
+render.canvas.style.position = "absolute";
 var timeLeft = 12
 var score = 0
 
