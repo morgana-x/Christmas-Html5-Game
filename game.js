@@ -335,7 +335,7 @@ var fontsize = (40 * (canvas.width / 1200));
         context.fillText("Times up!", canvas.width/2, canvas.height/2)
         if (timeElapsedReal > timeLeft)
         {
-            context.fillText("Click to retry :)", canvas.width/2, (canvas.height/2) + 40)
+            context.fillText("Click to retry :)", canvas.width/2, (canvas.height/2) + fontsize)
         }
     }
 })();
