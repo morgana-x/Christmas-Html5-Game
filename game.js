@@ -370,6 +370,122 @@ var fontsize = (40 * (canvas.width / 1200));
 
 var playedEndSound1 = false;
 var playedEndSound2 = false;
+
+
+
+var naughtyFirstNames = [
+    "Alice",
+    "Andy",
+    "Anderson",
+    "David",
+    "Dennice",
+    "Gilbert",
+    "Fred",
+    "Rick",
+    "Kate",
+    "Rory",
+    "Clara",
+    "Peter",
+    "Rowan",
+    "Hebert",
+    "Ms.",
+    "Mr.",
+    "Mrs.",
+    "Sir",
+    "Authur",
+    "Pettle",
+    "Satan",
+    "Qubert",
+    "Michael",
+    "Terry",
+    "Jack",
+    "Jill",
+    "Rosemary",
+    "Romeo",
+    "Juliet",
+    "Dr.",
+
+]
+var naughtyLastNames = [
+    "Drummond",
+    "FiddleSticks",
+    "CheeseEater",
+    "Stone",
+    "Steele",
+    "Brown",
+    "Powers",
+    "Herbertson",
+    "Capaldri",
+    "Stevens",
+    "Jefferies",
+    "Socks",
+    "Gold",
+    "Patterson",
+    "Claus",
+    "Illerts",
+    "the Mayor",
+    "the Prime Minister",
+    "Paddocks",
+    "Farms",
+    "Pharmacy",
+    "Phil"
+]
+function generate_randomname()
+{
+    return naughtyFirstNames[getRandomInt(0, naughtyFirstNames.length)] + " " +  naughtyLastNames[getRandomInt(0, naughtyLastNames.length)]
+}
+naughtyPeople = []
+for (let i =0; i < people.length; i++)
+{
+    naughtyPeople.push({
+        name: generate_randomname(),
+        dead: false
+    })
+}
+var fontsizesmall = (10 * (canvas.width / 1200));
+function render_naughtylistItem(x,y,name,dead)
+{
+    height = fontsizesmall;
+    width = fontsizesmall * name.length /2;
+    context.font = "bold " + fontsizesmall +"px serif";
+    context.textAlign = "right";
+    context.fillStyle = 'white'
+    console.log(dead)
+    context.fillText(name, x, y)
+    if (dead)
+    {
+        context.fillStyle = 'red'
+        context.fillRect(x, y - ((fontsizesmall/2) - (fontsizesmall/5/2)), -width, (fontsizesmall/5))
+    }
+    return height;
+}
+
+lastUpdatedPeopleLength = performance.now()
+allegedPeopleLength = people.length
+function render_naughtylist(x, y)
+{
+    //console.log("Rendering naughtty list")
+    //console.log( naughtyPeople.length)
+    current_y = 0;
+    count = 0
+    backwardList = []
+    for (let i=allegedPeopleLength-1; i >= 0; i--)
+    {
+        count++
+        if (count > 20)
+        {
+            break;
+        }
+        naughtyPerson = naughtyPeople[i]
+        naughtyPerson.dead = i > people.length + (people.length - allegedPeopleLength)
+        backwardList.splice(0, 0, naughtyPerson);
+       
+    }
+    backwardList.forEach(naughtyPerson => {
+        current_y += render_naughtylistItem(x, y + current_y, naughtyPerson.name, naughtyPerson.dead)
+    });
+}
+
 (function render_foreground() {
     requestAnimationFrame(render_foreground);
     
@@ -400,6 +516,16 @@ var playedEndSound2 = false;
         ctx.fillStyle = 'red'
         context.fillText("Show the residents the true meaning of christmas!", canvas.width/2, canvas.height/2 - (fontsize * 2) + (fontsize * 1.6) + (fontsize * 1.5) + fontsize + fontsize)
     }
+    else
+    {
+        render_naughtylist(canvas.width - 1, 0)
+        if ((performance.now() - lastUpdatedPeopleLength > 500) && (timeElapsedReal < timeLeft))
+        {
+            allegedPeopleLength = people.length
+            lastUpdatedPeopleLength = performance.now()
+        }
+    }
+    context.font = "bold " + fontsize +"px serif";
     if ( started && (timeElapsedReal <= timeLeft))
     {
     var timeElapsed = performance.now() - lastTime;
