@@ -143,9 +143,11 @@ screamsounds = []
 
 screamsounds.push(new Audio('snd/m_scream_1.mp3'));
 screamsounds.push(new Audio('snd/f_scream_1.mp3'));
-screamsounds.push(new Audio('snd/splat.mp3'));
-screamsounds.push(new Audio('snd/splat2.mp3'));
-screamsounds.push(new Audio('snd/crack.mp3'));
+screamsounds.push(new Audio('snd/wilhelm.mp3'))
+deathsounds = []
+deathsounds.push(new Audio('snd/splat.mp3'));
+deathsounds.push(new Audio('snd/splat2.mp3'));
+deathsounds.push(new Audio('snd/crack.mp3'));
 World.add(engine.world,  [ground]);//, wallRight, wallLeft]);// [box1, box2, box3, box4, box5, box6, box7, ground, wallRight, wallLeft]);
 
 var people = []
@@ -211,7 +213,11 @@ function oncollide(stuff){
         }
         if (playSound)
         {
-            screamsounds[getRandomInt(0,2)].play();
+            if (Math.random() > 0.9)
+            {
+                screamsounds[getRandomInt(0,screamsounds.length)].play();
+            }
+            deathsounds[getRandomInt(0, deathsounds.length)].play();
         }
         else
         {
