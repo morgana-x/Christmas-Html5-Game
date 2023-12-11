@@ -143,8 +143,9 @@ screamsounds = []
 
 screamsounds.push(new Audio('snd/m_scream_1.mp3'));
 screamsounds.push(new Audio('snd/f_scream_1.mp3'));
-
-
+screamsounds.push(new Audio('snd/splat.mp3'));
+screamsounds.push(new Audio('snd/splat2.mp3'));
+screamsounds.push(new Audio('snd/crack.mp3'));
 World.add(engine.world,  [ground]);//, wallRight, wallLeft]);// [box1, box2, box3, box4, box5, box6, box7, ground, wallRight, wallLeft]);
 
 var people = []
@@ -186,8 +187,8 @@ var boxSound = new Audio('snd/box_hit.ogg');
 
 var collisionSounds = []
 collisionSounds.push(boxSound)
-collisionSounds.push(new Audio('snd/plastic_hit.ogg'));
-collisionSounds.push(new Audio('snd/plastic_hit_2.ogg'));
+//collisionSounds.push(new Audio('snd/plastic_hit.ogg'));
+collisionSounds.push(new Audio('snd/box_hit_2.mp3'));
 function oncollide(stuff){
     if (timeElapsedReal >= timeLeft)
     {
