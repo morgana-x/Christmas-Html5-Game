@@ -35,8 +35,8 @@ var render = Render.create({
   element: document.getElementById('container'),
   engine: engine,
   options: {
-    width: 520,
-    height: 520,
+    width: window.innerWidth,
+    height: window.innerHeight,
     wireframes: true, // need this or various render styles won't take
     background: pink
   }
