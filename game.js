@@ -191,6 +191,8 @@ var collisionSounds = []
 collisionSounds.push(boxSound)
 //collisionSounds.push(new Audio('snd/plastic_hit.ogg'));
 collisionSounds.push(new Audio('snd/box_hit_2.mp3'));
+
+var firstScream = true;
 function oncollide(stuff){
     if (timeElapsedReal >= timeLeft)
     {
@@ -213,8 +215,9 @@ function oncollide(stuff){
         }
         if (playSound)
         {
-            if (Math.random() > 0.9)
+            if ( firstScream || (Math.random() > 0.9))
             {
+                firstScream = false;
                 screamsounds[getRandomInt(0,screamsounds.length)].play();
             }
             deathsounds[getRandomInt(0, deathsounds.length)].play();
@@ -308,8 +311,13 @@ var initialPeople = people.length;
     {
         ctx.textAlign = "center";
         context.fillText("Click to begin!", canvas.width/2, canvas.height/2 - 80);
+        ctx.fillStyle = 'gold'
         context.fillText("Click to spawn presents",canvas.width/2, canvas.height/2 - 80 + 60)
         context.fillText("Scroll to zoom", canvas.width/2, canvas.height/2 - 80 + 60 + 40)
+        ctx.fillStyle = 'white'
+        context.fillText("You are santa and a town has been very naughty...", canvas.width/2, canvas.height/2 - 80 + 60 + 40 + 60)
+        ctx.fillStyle = 'red'
+        context.fillText("Show the residents the true meaning of christmas!", canvas.width/2, canvas.height/2 - 80 + 60 + 40 + 60 + 40)
     }
     if ( started && (timeElapsedReal <= timeLeft))
     {
