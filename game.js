@@ -271,7 +271,40 @@ Matter.Events.on(engine, "collisionEnd", oncollide)
 //spawnHouse(200,930, engine.world);
 var numOfHouses = Math.round(groundwidth/ (50))
 for (let i = 0; i < numOfHouses; i++) {//20; i++) {
+    if (Math.random() > 0.4)
+    {
     spawnHouse( 47 + (i*47), render.options.height, engine.world);
+    }
+    else if (Math.random() < 0.3)
+    {
+        var amountOfPeople = getRandomInt(4, 6); // 8;
+        for (let z = 0; z < amountOfPeople; z++) {
+            spawnPerson(  (47 + (i*47)) +  ( (0.5*amountOfPeople * 2.5 )) + z * 4, render.options.height - (3.5/2), engine.world);
+        }
+    }
+    else
+    {
+        spawnTree( 47 + (i*47), render.options.height, engine.world)
+        var amountOfPeople = getRandomInt(1, 4); // 8;
+        for (let z = 0; z < amountOfPeople; z++) {
+            spawnPerson(  (47 + (i*47)) + 5 +  ( (0.5*amountOfPeople * 2.5 )) + z * 4, render.options.height - (3.5/2), engine.world);
+        }
+        var amountOfPeople2 = getRandomInt(1, 4);
+        for (let z = 0; z < amountOfPeople2; z++) {
+            spawnPerson(  (47 + (i*47)) - (5 +  ( (0.5*amountOfPeople2 * 2.5 )) + z * 4), render.options.height - (3.5/2), engine.world);
+        }
+    }
+}
+
+function spawnTree(x,y, world)
+{
+    var height = getRandomInt(7,25)
+    var width = height / 3
+    var leavewidth = width * 3
+    var boxA = Bodies.rectangle(x, y - (height/2), width, height);
+    var boxB = Bodies.rectangle(x, y - (height + (leavewidth/2)), leavewidth,leavewidth)
+    stuff = [boxA,boxB]; 
+    World.add(world, stuff);
 }
 // run the engine
 //Engine.run(engine);
