@@ -462,6 +462,9 @@ function render_naughtylistItem(x,y,name,dead)
 
 lastUpdatedPeopleLength = performance.now()
 allegedPeopleLength = people.length
+window.onresize = function(event) {
+    location.reload();
+};
 function render_naughtylist(x, y)
 {
     //console.log("Rendering naughtty list")
