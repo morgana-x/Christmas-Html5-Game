@@ -17,7 +17,7 @@ var bg_music = new Audio('snd/bg_music.mp3')
 bg_music.loop = true;
 
 var musicplaying = false;
-
+var started = false;
 // module aliases
 var Engine = Matter.Engine,
     Render = Matter.Render,
@@ -61,7 +61,7 @@ function updateZoom()
     if (zoomAmount >= 0.15)
     {
       lookx = render.options.width/2;
-      looky = render.options.height/2;
+      looky = render.options.height;
     }
     Matter.Render.lookAt(render, Bodies.rectangle(lookx,looky, 10000 * zoomAmount, 10000 * zoomAmount))
 }
@@ -251,6 +251,11 @@ function mouseClickPresent()
     {
         bg_music.play();
     }
+    if (!started)
+    {
+        started = true;
+        lastTime = performance.now();
+    }
     if (timeElapsedReal > timeLeft)
     {
         location.reload();
@@ -299,7 +304,14 @@ var initialPeople = people.length;
     }
     context.fillText("TIME LEFT: " + stuff, 65, 60 + 40)
     //context.fillText("PEOPLE LEFT: " + people.length, 70, 60 + 40 + 40)
-    if (timeElapsedReal <= timeLeft)
+    if (!started)
+    {
+        ctx.textAlign = "center";
+        context.fillText("Click to begin!", canvas.width/2, canvas.height/2 - 80);
+        context.fillText("Click to spawn presents",canvas.width/2, canvas.height/2 - 80 + 60)
+        context.fillText("Scroll to zoom", canvas.width/2, canvas.height/2 - 80 + 60 + 40)
+    }
+    if ( started && (timeElapsedReal <= timeLeft))
     {
     var timeElapsed = performance.now() - lastTime;
     timeElapsed /= 1000;
