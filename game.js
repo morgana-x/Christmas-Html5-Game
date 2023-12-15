@@ -63,20 +63,20 @@ var mouse = Mouse.create(render.canvas),
 
 var groundwidth = !isMobile() ? 2000 : 1000;
 
-var ground = Bodies.rectangle( groundwidth/2, render.options.height +50, groundwidth, 100, { 
+var ground = Bodies.rectangle( 0, 25, groundwidth, 50, { 
     isStatic: true,
     render: { fillStyle: white,}
 });
 var zoomAmount = 0.103
 function updateZoom()
 {
-    var lookx =  ground.position.x //(render.options.width/2);//-(mouse.position.x/2);//render.options.width/2;
-    var looky = (render.options.height);//-(mouse.position.y/2);//render.options.height/2;
-    if (zoomAmount >= 0.15)
+    var lookx =  0 //(render.options.width/2);//-(mouse.position.x/2);//render.options.width/2;
+    var looky = 0;//-(mouse.position.y/2);//render.options.height/2;
+    /*if (zoomAmount >= 0.15)
     {
-      lookx = ground.position.x//render.options.width/2;
-      looky = render.options.height;
-    }
+      lookx = render.canvas.width/2;
+      looky = render.canvas.height/2;
+    }*/
     Matter.Render.lookAt(render, Bodies.rectangle(lookx,looky, 10000 * zoomAmount, 10000 * zoomAmount))
 }
 updateZoom();
@@ -122,31 +122,6 @@ function customShape(x, y, shape, color) {
     });
 }
 
-/*
-var box1 = customShape(193, 296, shape1, blue);
-var box2 = customShape(148, 254, shape2, pink);
-var box3 = customShape(44, 251, shape3, yellow);
-var box4 = customShape(179, 37, shape4, yellow);
-var box5 = customShape(189, 101, shape5, pink);
-var box6 = customShape(189, 158, shape6, yellow);
-var box7 = customShape(85, 102, shape7, red);*/
-
-
-
-
-// create two boxes and a ground
-//var ground = Bodies.rectangle(render.options.width/2, render.options.height +50, render.options.width, 100, { 
-
-
-/*var wallRight = Bodies.rectangle(render.options.width, render.options.height/2, 100, render.options.height, { 
-  isStatic: true,
-  render: { fillStyle: white,}
-});
-
-var wallLeft = Bodies.rectangle(0, render.options.height/2,100, render.options.height, { 
-  isStatic: true,
-  render: { fillStyle: white,}
-});*/
 
 // add all of the bodies to the world
 
@@ -280,25 +255,25 @@ var numOfHouses = Math.round(groundwidth/ (50))
 for (let i = 0; i < numOfHouses; i++) {//20; i++) {
     if (Math.random() > 0.4)
     {
-    spawnHouse( 47 + (i*47), render.options.height, engine.world);
+    spawnHouse( 47 + (i*47) - groundwidth/2, 0, engine.world);
     }
     else if (Math.random() < 0.3)
     {
         var amountOfPeople = getRandomInt(4, 6); // 8;
         for (let z = 0; z < amountOfPeople; z++) {
-            spawnPerson(  (47 + (i*47)) +  ( (0.5*amountOfPeople * 2.5 )) + z * 4, render.options.height - (3.5/2), engine.world);
+            spawnPerson(  (47 + (i*47)) - groundwidth/2 +  ( (0.5*amountOfPeople * 2.5 )) + z * 4, 0 - (3.5/2), engine.world);
         }
     }
     else
     {
-        spawnTree( 47 + (i*47), render.options.height, engine.world)
+        spawnTree( 47 - groundwidth/2 + (i*47), 0, engine.world)
         var amountOfPeople = getRandomInt(1, 4); // 8;
         for (let z = 0; z < amountOfPeople; z++) {
-            spawnPerson(  (47 + (i*47)) + 5 +  ( (0.5*amountOfPeople * 2.5 )) + z * 4, render.options.height - (3.5/2), engine.world);
+            spawnPerson(  (47 + (i*47)) + 5 - groundwidth/2 +  ( (0.5*amountOfPeople * 2.5 )) + z * 4, 0 - (3.5/2), engine.world);
         }
         var amountOfPeople2 = getRandomInt(1, 4);
         for (let z = 0; z < amountOfPeople2; z++) {
-            spawnPerson(  (47 + (i*47)) - (5 +  ( (0.5*amountOfPeople2 * 2.5 )) + z * 4), render.options.height - (3.5/2), engine.world);
+            spawnPerson(  (47 + (i*47)) - groundwidth/2 - (5 +  ( (0.5*amountOfPeople2 * 2.5 )) + z * 4), 0 - (3.5/2), engine.world);
         }
     }
 }
@@ -510,8 +485,22 @@ function render_naughtylistItem(x,y,name,dead)
 lastUpdatedPeopleLength = performance.now();
 allegedPeopleLength = people.length;
 window.onresize = function(event) {
-    location.reload();
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    update_snow();
+    fontsizesmall = (10 * (canvas.width / 1200));
+    fontsize = (40 * (canvas.width / 1200));
+    Render.stop(render);
+    render.options.width = window.innerWidth;
+    render.options.height = window.innerHeight;
+    render.canvas.width = window.innerWidth;
+    render.canvas.height = window.innerHeight;
+    Render.run(render);
+    console.log("Resized!")
+    //Render.run(render);
+    //location.reload();
 };
+
 function render_naughtylist(x, y)
 {
     current_y = 0;
@@ -627,20 +616,29 @@ var playedLastWishSound = false;
     }
 })();
 
+
 //snowflake particles
 var mp = 50; //max particles
 var particles = [];
-for(var i = 0; i < mp; i++)
-{
-    particles.push({
-        x: Math.random()*canvas.width, //x-coordinate
-        y: Math.random()*canvas.height, //y-coordinate
-        r: Math.random()*4+1, //radius
-        d: Math.random()*mp //density
-    })
-}
 var W = canvas.width;
 var H = canvas.height;
+function update_snow()
+{
+    particles = [];
+    W = canvas.width;
+    H = canvas.height;
+    for(var i = 0; i < mp; i++)
+    {
+        
+        particles.push({
+            x: Math.random()*canvas.width, //x-coordinate
+            y: Math.random()*canvas.height, //y-coordinate
+            r: Math.random()*4+1, //radius
+            d: Math.random()*mp //density
+        })
+    }
+}
+update_snow();
 
 
 //Lets draw the flakes
