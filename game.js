@@ -4,14 +4,21 @@ var pink = '#E097C2';
 var bg = '#008000';
 var white = '#fff';
 var blue = '#3000'
-
-const shape1 = '15,0 25,2 36,17 11,34 6,34 0,20 5,8';
-const shape2 = '20,8 60,0 93,5 126,52 104,102 62,137 3,102 0,70';
-const shape3 = '14,13 41,0 65,18 84,41 88,91 56,125 24,125 0,91 0,56';
-const shape4 = '24,0 45,22 35,60 12,54 1,35 0,20';
-const shape5 = '19,0 34,0 44,15 44,51 20,53 0,34';
-const shape6 = '12,0 29,0 51,9 64,24 64,42 54,59 39,73 7,73 1,59 0,38';
-const shape7 = '33,0 95,0 116,14 138,39 154,74 170,114 166,148 125,174 95,190 65,205 18,171 0,125 0,45';
+function isMobile() {
+    const toMatch = [
+        /Android/i,
+        /webOS/i,
+        /iPhone/i,
+        /iPad/i,
+        /iPod/i,
+        /BlackBerry/i,
+        /Windows Phone/i
+    ];
+    
+    return toMatch.some((toMatchItem) => {
+        return navigator.userAgent.match(toMatchItem);
+    });
+}
 var bg_music = new Audio('snd/bg_music.mp3')
 
 bg_music.loop = true;
@@ -54,7 +61,7 @@ var mouse = Mouse.create(render.canvas),
       }
     });
 
-var groundwidth = 2000;
+var groundwidth = !isMobile() ? 2000 : 1000;
 
 var ground = Bodies.rectangle( groundwidth/2, render.options.height +50, groundwidth, 100, { 
     isStatic: true,
