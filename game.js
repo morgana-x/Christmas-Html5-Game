@@ -165,7 +165,7 @@ function spawnHouse(x,y, world){
     /*var boxA = Bodies.rectangle(x + width/2, y, thicknessWall, height);
     var boxB = Bodies.rectangle(x - width/2, y, thicknessWall, height);
     var boxC = Bodies.rectangle(x, y - height - thicknessWall-0.1, width+(thicknessWall*2), thicknessRoof);*/
-    var floors =  (width >= 34) ? getRandomInt(1, 3) : 1;
+    var floors =  (width >= 30) ? getRandomInt(1, ((width > 32) ? 5 : 3)) : 1;
     if (floors > 1)
     {
         thicknessWall *= floors/2
@@ -251,6 +251,8 @@ function oncollide(stuff){
         {
             return;
         }
+        Matter.Sleeping.set(pair.bodyB, false)
+        Matter.Sleeping.set(pair.bodyA, false)
         var playSound = false;
         if (people.includes( pair.bodyA, 0 ))
         {
