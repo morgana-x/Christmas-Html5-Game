@@ -4,7 +4,7 @@ var pink = '#E097C2';
 var bg = '#008000';
 var white = '#fff';
 var blue = '#3000'
-function isMobile() {
+/*function isMobile() {
     const toMatch = [
         /Android/i,
         /webOS/i,
@@ -18,6 +18,10 @@ function isMobile() {
     return toMatch.some((toMatchItem) => {
         return navigator.userAgent.match(toMatchItem);
     });
+}*/
+function isMobile()
+{
+    return (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent))
 }
 var bg_music = new Audio('snd/bg_music.mp3')
 
@@ -61,7 +65,9 @@ var mouse = Mouse.create(render.canvas),
       }
     });
 
-var groundwidth = !isMobile() ? 2000 : 1000;
+var groundwidth = !isMobile() ? 2000 : 1000;    
+
+console.log(isMobile())
 
 var ground = Bodies.rectangle( 0, 25, groundwidth, 50, { 
     isStatic: true,
@@ -82,7 +88,6 @@ function updateZoom()
 updateZoom();
 function onScroll(event)
 {
-    //event.preventDefault();
 
   zoomAmount += (event.deltaY/10000) // * -0.10;
 
@@ -312,7 +317,8 @@ function mouseClickPresent()
     if (!started)
     {
         started = true;
-        Engine.run(engine);
+        //Engine.run(engine);
+        Matter.Runner.run(engine);
         //mouseConstraint.constraint.render.visible = true
         lastTime = performance.now();
     }
