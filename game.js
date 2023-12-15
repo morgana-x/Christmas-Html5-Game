@@ -147,6 +147,7 @@ function spawnPerson(x,y,world){
     var boxA = Bodies.rectangle(x, y, 2, 3.5);
     stuff = [boxA]; 
     people.push(boxA)
+    Matter.Sleeping.set(boxA, true)
     World.add(world, stuff);
 }
 function getRandomArbitrary(min, max) {
@@ -190,6 +191,9 @@ function spawnHouse(x,y, world){
         boxB.mass = mass;
         boxC.mass = mass;
     }*/
+    Matter.Sleeping.set(boxA, true)
+    Matter.Sleeping.set(boxB, true)
+    Matter.Sleeping.set(boxC, true)
     stuff = [boxA, boxB, boxC];
     World.add(world,  stuff);
     var amountOfPeople = getRandomInt(2, width/4); // 8;
@@ -219,6 +223,23 @@ collisionSounds.push(new Audio('snd/box_hit_2.mp3'));
 collisionSounds.push(new Audio('snd/impact_3.ogg'))
 collisionSounds.push(new Audio('snd/box_hit.ogg'))
 var firstScream = true;
+
+function precollide(stuff)
+{
+    if (timeElapsedReal >= timeLeft)
+    {
+        return;
+    }
+    var pairs = stuff.pairs
+    pairs.forEach(pair => {
+        if (pair.bodyA.isSleeping & pair.bodyB.isSleeping)
+        {
+            return;
+        }
+        Matter.Sleeping.set(pair.bodyB, false)
+        Matter.Sleeping.set(pair.bodyA, false)
+    })
+}
 function oncollide(stuff){
     if (timeElapsedReal >= timeLeft)
     {
@@ -226,6 +247,10 @@ function oncollide(stuff){
     }
     var pairs = stuff.pairs
     pairs.forEach(pair => {
+        if (pair.bodyA.isSleeping & pair.bodyB.isSleeping)
+        {
+            return;
+        }
         var playSound = false;
         if (people.includes( pair.bodyA, 0 ))
         {
@@ -255,6 +280,7 @@ function oncollide(stuff){
     });
 }
 Matter.Events.on(engine, "collisionEnd", oncollide)
+Matter.Events.on(engine, "collisionStart", precollide)
 //spawnHouse(200,930, engine.world);
 var numOfHouses = Math.round(groundwidth/ (50))
 for (let i = 0; i < numOfHouses; i++) {//20; i++) {
@@ -290,6 +316,8 @@ function spawnTree(x,y, world)
     var leavewidth = width * 3
     var boxA = Bodies.rectangle(x, y - (height/2), width, height);
     var boxB = Bodies.rectangle(x, y - (height + (leavewidth/2)), leavewidth,leavewidth)
+    Matter.Sleeping.set(boxA, true)
+    Matter.Sleeping.set(boxB, true)
     stuff = [boxA,boxB]; 
     World.add(world, stuff);
 }
