@@ -55,6 +55,7 @@ var mouse = Mouse.create(render.canvas),
     });
 
 var groundwidth = 2000;
+
 var ground = Bodies.rectangle( groundwidth/2, render.options.height +50, groundwidth, 100, { 
     isStatic: true,
     render: { fillStyle: white,}
@@ -94,7 +95,7 @@ function onScroll(event)
 
 
 
-window.onwheel = onScroll;
+
 render.canvas.style.left = "0px";
 render.canvas.style.top = "0px";
 render.canvas.style.position = "absolute";
@@ -349,7 +350,6 @@ function mouseClickPresent()
     }
     spawnPresent(mouse.position.x,mouse.position.y, engine.world)
 }
-window.onclick = mouseClickPresent;
 
 
 var canvas = document.createElement('canvas'),
@@ -363,6 +363,10 @@ canvas.style.position = "absolute";
 canvas.style.zIndex = "100";
 canvas.style.pointerEvents = "none"
 document.body.appendChild(canvas);
+
+document.onclick = mouseClickPresent;
+document.ontouchend = mouseClickPresent;
+document.onwheel = onScroll;
 
 var initialPeople = people.length;
 var fontsize = (40 * (canvas.width / 1200));
